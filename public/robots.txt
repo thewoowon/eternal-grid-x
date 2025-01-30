@@ -1,0 +1,10 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /api/*
+
+# Host
+Host: https://www.eternalgridx.com
+
+# Sitemaps
+Sitemap: https://www.eternalgridx.com/sitemap.xml
