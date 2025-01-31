@@ -10,7 +10,7 @@ const Splash = () => {
   useEffect(() => {
     setTimeout(() => {
       setBoarding(false);
-    }, 2000);
+    }, 5000);
   }, []);
 
   if (!boarding) {

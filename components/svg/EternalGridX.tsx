@@ -64,7 +64,7 @@ const EternalGridX = ({ fill = "none", width = 1294, height = 1244 }) => {
         const pathAnimation = css`
           stroke-dasharray: ${length};
           stroke-dashoffset: ${length};
-          animation: ${draw} 3s ease-in-out forwards;
+          animation: ${draw} 2.5s ease-in-out 1s forwards;
         `;
 
         return (
