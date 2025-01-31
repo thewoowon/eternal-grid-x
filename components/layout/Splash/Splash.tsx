@@ -34,15 +34,21 @@ const Container = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  background-color: #1e1e1e;
+  background-color: #000000;
   z-index: 200;
-  animation: fadeOut 1s ease-in-out 1s forwards;
+  animation-name: fadeOut;
+  animation-duration: 5s;
+  animation-fill-mode: forwards;
+  animation-timing-function: ease-in-out;
 
   @keyframes fadeOut {
-    from {
+    0% {
       opacity: 1;
     }
-    to {
+    70% {
+      opacity: 1;
+    }
+    100% {
       opacity: 0;
     }
   }
