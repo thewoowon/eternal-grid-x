@@ -2,34 +2,43 @@
 
 import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { useRef, useMemo } from "react";
 import * as THREE from "three";
+import React from "react";
 
-const TorusKnot = () => {
+const TorusKnot = React.memo(() => {
   const ref = useRef<THREE.Mesh>(null);
-  const [color, setColor] = useState(new THREE.Color("#ff0077"));
+  const colorRef = useRef(new THREE.Color("#ff0077"));
+
+  // ✅ material을 useMemo로 캐싱하여 성능 최적화
+  const material = useMemo(
+    () =>
+      new THREE.MeshStandardMaterial({
+        color: colorRef.current,
+        metalness: 0.8,
+        roughness: 0.3,
+      }),
+    []
+  );
 
   useFrame(({ clock }) => {
     if (ref.current) {
       ref.current.rotation.x = clock.getElapsedTime() * 0.3;
       ref.current.rotation.y = clock.getElapsedTime() * 0.5;
-      ref.current.material = new THREE.MeshStandardMaterial({
-        color: color,
-        metalness: 0.8,
-        roughness: 0.3,
-      });
     }
   });
 
   return (
-    <mesh ref={ref} onPointerOver={() => setColor(new THREE.Color("#00ffaa"))}>
+    <mesh ref={ref}>
       <torusKnotGeometry args={[1, 0.3, 128, 32]} />
-      <meshStandardMaterial color={color} metalness={0.8} roughness={0.3} />
+      <primitive attach="material" object={material} />
     </mesh>
   );
-};
+});
 
-const Scene = () => {
+TorusKnot.displayName = "TorusKnot";
+
+const TorusScene = () => {
   return (
     <Canvas
       shadows
@@ -46,9 +55,9 @@ const Scene = () => {
         shadow-mapSize={[2048, 2048]}
       />
       <TorusKnot />
-      <OrbitControls enableDamping />
+      <OrbitControls enableDamping enableZoom={false} />
     </Canvas>
   );
 };
 
-export default Scene;
+export default TorusScene;
