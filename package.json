@@ -40,6 +40,7 @@
     "@types/qs": "^6.9.18",
     "@types/three": "^0.172.0",
     "axios": "^1.7.9",
+    "leva": "^0.10.0",
     "next": "15.1.5",
     "next-seo": "^6.6.0",
     "next-sitemap": "^4.2.3",
