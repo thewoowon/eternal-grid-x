@@ -4,6 +4,10 @@ const nextConfig: NextConfig = {
   /* config options here */
   webpack: (config) => {
     config.resolve.fallback = { fs: false }; // three.js 사용 시 필요할 수 있음
+    config.module.rules.push({
+      test: /\.glsl$/,
+      use: "raw-loader",
+    });
     return config;
   },
 };
