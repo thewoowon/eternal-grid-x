@@ -1,5 +1,13 @@
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { useRef, useState } from "react";
+"use client";
+
+import {
+  Canvas,
+  useFrame,
+  useLoader,
+  extend,
+  useThree,
+} from "@react-three/fiber";
+import { useRef, useMemo, useEffect } from "react";
 import { OrbitControls, shaderMaterial } from "@react-three/drei";
 import * as THREE from "three";
 import { useControls } from "leva";
@@ -13,15 +21,15 @@ import atmosphereFragmentShader from "./shaders/atmosphere/fragment.glsl";
  */
 const EarthMaterial = shaderMaterial(
   {
-    uDayTexture: null,
-    uNightTexture: null,
-    uSpecularCloudsTexture: null,
+    uDayTexture: new THREE.Texture(),
+    uNightTexture: new THREE.Texture(),
+    uSpecularCloudsTexture: new THREE.Texture(),
     uSunDirection: new THREE.Vector3(0, 0, 1),
     uAtmosphereDayColor: new THREE.Color("#00aaff"),
     uAtmosphereTwilightColor: new THREE.Color("#ff6600"),
   },
-  earthVertexShader,
-  earthFragmentShader
+  earthVertexShader as string,
+  earthFragmentShader as string
 );
 
 /**
@@ -33,9 +41,12 @@ const AtmosphereMaterial = shaderMaterial(
     uAtmosphereDayColor: new THREE.Color("#00aaff"),
     uAtmosphereTwilightColor: new THREE.Color("#ff6600"),
   },
-  atmosphereVertexShader,
-  atmosphereFragmentShader
+  atmosphereVertexShader as string,
+  atmosphereFragmentShader as string
 );
+
+// Three.js에서 확장 선언
+extend({ EarthMaterial, AtmosphereMaterial });
 
 /**
  * 🌍 Earth Component
@@ -45,11 +56,19 @@ const Earth = () => {
   const atmosphereRef = useRef<THREE.Mesh>(null!);
 
   // Load Textures
-  const dayTexture = useLoader(THREE.TextureLoader, "./earth/day.jpg");
-  const nightTexture = useLoader(THREE.TextureLoader, "./earth/night.jpg");
+  const dayTexture = useLoader(
+    THREE.TextureLoader,
+    "/images/static/earth/day.jpg"
+  );
+
+  const nightTexture = useLoader(
+    THREE.TextureLoader,
+    "/images/static/earth/night.jpg"
+  );
+
   const specularCloudsTexture = useLoader(
     THREE.TextureLoader,
-    "./earth/specularClouds.jpg"
+    "/images/static/earth/specularClouds.jpg"
   );
 
   // Controls (UI 조절)
@@ -65,23 +84,41 @@ const Earth = () => {
   const sunSpherical = new THREE.Spherical(1, phi, theta);
   sunDirection.setFromSpherical(sunSpherical);
 
+  // 🌍 Earth Material 생성 (useMemo 사용)
+  const earthMaterial = useMemo(() => {
+    const material = new EarthMaterial();
+    material.uniforms.uDayTexture.value = dayTexture;
+    material.uniforms.uNightTexture.value = nightTexture;
+    material.uniforms.uSpecularCloudsTexture.value = specularCloudsTexture;
+    return material;
+  }, [dayTexture, nightTexture, specularCloudsTexture]);
+
+  // 🌌 Atmosphere Material 생성
+  const atmosphereMaterial = useMemo(() => {
+    return new AtmosphereMaterial();
+  }, []);
+
   useFrame(({ clock }) => {
     if (earthRef.current) {
       earthRef.current.rotation.y = clock.getElapsedTime() * 0.1;
     }
 
-    if (earthRef.current?.material) {
-      const material = earthRef.current.material as THREE.ShaderMaterial;
-      material.uniforms.uSunDirection.value.copy(sunDirection);
-      material.uniforms.uAtmosphereDayColor.value.set(atmosphereDayColor);
-      material.uniforms.uAtmosphereTwilightColor.value.set(atmosphereTwilightColor);
+    if (earthMaterial) {
+      earthMaterial.uniforms.uSunDirection.value.copy(sunDirection);
+      earthMaterial.uniforms.uAtmosphereDayColor.value.set(atmosphereDayColor);
+      earthMaterial.uniforms.uAtmosphereTwilightColor.value.set(
+        atmosphereTwilightColor
+      );
     }
 
-    if (atmosphereRef.current?.material) {
-      const material = atmosphereRef.current.material as THREE.ShaderMaterial;
-      material.uniforms.uSunDirection.value.copy(sunDirection);
-      material.uniforms.uAtmosphereDayColor.value.set(atmosphereDayColor);
-      material.uniforms.uAtmosphereTwilightColor.value.set(atmosphereTwilightColor);
+    if (atmosphereMaterial) {
+      atmosphereMaterial.uniforms.uSunDirection.value.copy(sunDirection);
+      atmosphereMaterial.uniforms.uAtmosphereDayColor.value.set(
+        atmosphereDayColor
+      );
+      atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(
+        atmosphereTwilightColor
+      );
     }
   });
 
@@ -90,17 +127,13 @@ const Earth = () => {
       {/* 🌍 Earth Mesh */}
       <mesh ref={earthRef}>
         <sphereGeometry args={[2, 64, 64]} />
-        <EarthMaterial
-          uDayTexture={dayTexture}
-          uNightTexture={nightTexture}
-          uSpecularCloudsTexture={specularCloudsTexture}
-        />
+        <primitive object={earthMaterial} attach="material" />
       </mesh>
 
       {/* 🌌 Atmosphere Mesh */}
       <mesh ref={atmosphereRef} scale={1.04}>
         <sphereGeometry args={[2, 64, 64]} />
-        <AtmosphereMaterial />
+        <primitive object={atmosphereMaterial} attach="material" />
       </mesh>
     </>
   );
@@ -127,18 +160,32 @@ const SunDebug = () => {
   );
 };
 
+const SceneSetup = () => {
+  const { gl } = useThree();
+
+  useEffect(() => {
+    gl.setClearColor("#000011");
+  }, [gl]);
+
+  return null;
+};
+
 /**
  * 🎥 Scene & Renderer
  */
-const Scene = () => {
+const EarthScene = () => {
   return (
     <Canvas
       camera={{ position: [12, 5, 4], fov: 25 }}
+      dpr={Math.min(window.devicePixelRatio, 2)}
       gl={{ antialias: true }}
     >
       {/* Lights */}
       <ambientLight intensity={0.5} />
       <directionalLight position={[5, 5, 5]} intensity={1} />
+
+      {/* Scene Setup */}
+      <SceneSetup />
 
       {/* Earth */}
       <Earth />
@@ -152,4 +199,4 @@ const Scene = () => {
   );
 };
 
-export default Scene;
+export default EarthScene;
