@@ -90,23 +90,22 @@ const Earth: React.FC = () => {
     );
     atmosphereMaterial.uniforms.uAtmosphereTwilightColor.value.set(
       atmosphereTwilightColor
-      
     );
   });
 
-  // GUI
-  useEffect(() => {
-    const gui = new GUI();
-    gui
-      .addColor({ atmosphereDayColor }, "atmosphereDayColor")
-      .onChange(setAtmosphereDayColor);
-    gui
-      .addColor({ atmosphereTwilightColor }, "atmosphereTwilightColor")
-      .onChange(setAtmosphereTwilightColor);
-    gui.add({ phi }, "phi", 0, Math.PI).onChange(setPhi);
-    gui.add({ theta }, "theta", -Math.PI, Math.PI).onChange(setTheta);
-    return () => gui.destroy();
-  }, []);
+  // // GUI
+  // useEffect(() => {
+  //   const gui = new GUI();
+  //   gui
+  //     .addColor({ atmosphereDayColor }, "atmosphereDayColor")
+  //     .onChange(setAtmosphereDayColor);
+  //   gui
+  //     .addColor({ atmosphereTwilightColor }, "atmosphereTwilightColor")
+  //     .onChange(setAtmosphereTwilightColor);
+  //   gui.add({ phi }, "phi", 0, Math.PI).onChange(setPhi);
+  //   gui.add({ theta }, "theta", -Math.PI, Math.PI).onChange(setTheta);
+  //   return () => gui.destroy();
+  // }, []);
 
   return (
     <>
@@ -153,7 +152,7 @@ const EarthScene: React.FC = () => {
       <Earth />
 
       {/* Controls */}
-      <OrbitControls enableDamping />
+      <OrbitControls enableDamping enableZoom={false} />
       {/* Scene Setup */}
       <SceneSetup />
     </Canvas>
