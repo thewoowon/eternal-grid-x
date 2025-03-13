@@ -12,9 +12,6 @@ const EarthScene = dynamic(
 export default function Home() {
   return (
     <div style={{ width: "100vw", height: "100vh" }}>
-      {/* <section style={{ width: "100vw", height: "100vh" }}>
-        <TorusScene />
-      </section> */}
       <section style={{ width: "100vw", height: "100vh" }}>
         <EarthScene />
       </section>
