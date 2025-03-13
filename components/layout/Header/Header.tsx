@@ -1,11 +1,31 @@
 import Logo from "@/components/svg/Logo";
 import styled from "@emotion/styled";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
+  const router = useRouter();
   return (
     <Container>
       <Wrapper>
-        <Logo width={100} />
+        <div
+          style={{
+            cursor: "pointer",
+          }}
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          <Logo width={100} />
+        </div>
+        <FlexBox>
+          <Link href="/halftone">Halftone</Link>
+          <Link href="/hologram">Hologram</Link>
+          <Link href="/particles">Particles</Link>
+          <Link href="/raging">Raging</Link>
+          <Link href="/shading">Shading</Link>
+          <Link href="/terrain">Terrain</Link>
+        </FlexBox>
       </Wrapper>
     </Container>
   );
@@ -36,4 +56,11 @@ const Wrapper = styled.div`
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
+`;
+
+const FlexBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
 `;
