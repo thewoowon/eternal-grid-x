@@ -5,31 +5,41 @@ export default function NotFound() {
   return (
     <div
       style={{
+        width: "100vw",
+        height: "100vh",
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
         alignItems: "center",
+        backgroundColor: "black",
       }}
     >
       <div
         style={{
           width: "224px",
-          height: "143px",
+          height: "224px",
           position: "relative",
         }}
       >
         <Image src={"/images/error/network-error.png"} alt="" priority fill />
       </div>
-      <div>존재하지 않는 경로에요 🤣</div>
+      <div
+        style={{
+          fontSize: "24px",
+          color: "white",
+          textDecoration: "none",
+        }}
+      >
+        Not Found
+      </div>
       <Link
         href="/"
         style={{
           marginTop: "16px",
-          color: "#0070f3",
-          textDecoration: "none",
+          color: "white",
         }}
       >
-        홈으로 가기
+        Go back to home
       </Link>
     </div>
   );
