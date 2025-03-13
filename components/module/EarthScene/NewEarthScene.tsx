@@ -93,19 +93,19 @@ const Earth: React.FC = () => {
     );
   });
 
-  // // GUI
-  // useEffect(() => {
-  //   const gui = new GUI();
-  //   gui
-  //     .addColor({ atmosphereDayColor }, "atmosphereDayColor")
-  //     .onChange(setAtmosphereDayColor);
-  //   gui
-  //     .addColor({ atmosphereTwilightColor }, "atmosphereTwilightColor")
-  //     .onChange(setAtmosphereTwilightColor);
-  //   gui.add({ phi }, "phi", 0, Math.PI).onChange(setPhi);
-  //   gui.add({ theta }, "theta", -Math.PI, Math.PI).onChange(setTheta);
-  //   return () => gui.destroy();
-  // }, []);
+  // GUI
+  useEffect(() => {
+    const gui = new GUI();
+    gui
+      .addColor({ atmosphereDayColor }, "atmosphereDayColor")
+      .onChange(setAtmosphereDayColor);
+    gui
+      .addColor({ atmosphereTwilightColor }, "atmosphereTwilightColor")
+      .onChange(setAtmosphereTwilightColor);
+    gui.add({ phi }, "phi", 0, Math.PI).onChange(setPhi);
+    gui.add({ theta }, "theta", -Math.PI, Math.PI).onChange(setTheta);
+    return () => gui.destroy();
+  }, []);
 
   return (
     <>
