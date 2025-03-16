@@ -1,18 +1,21 @@
 "use client";
 
 import styled from "@emotion/styled";
+import dynamic from "next/dynamic";
+
+const RagingScene = dynamic(
+  () => import("@/components/module/RagingScene"),
+  {
+    ssr: false,
+  }
+);
 
 const RagingPage = () => {
   return (
     <Container>
-      <h1
-        style={{
-          color: "white",
-          fontSize: "3rem",
-        }}
-      >
-        Raging
-      </h1>
+      <section style={{ width: "100vw", height: "100vh" }}>
+        <RagingScene />
+      </section>
     </Container>
   );
 };
@@ -22,9 +25,4 @@ export default RagingPage;
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
 `;
