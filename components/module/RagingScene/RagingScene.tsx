@@ -110,6 +110,12 @@ const Water = () => {
     gui
       .add(materialRef.current.uniforms.uColorMultiplier, "value", 0, 10, 0.001)
       .name("uColorMultiplier");
+
+    // gui의 위치를 조정
+    gui.domElement.style.position = "absolute";
+    gui.domElement.style.top = "87px";
+    gui.domElement.style.right = "30px";
+    gui.domElement.style.zIndex = "100";
     return () => gui.destroy();
   }, []);
 
