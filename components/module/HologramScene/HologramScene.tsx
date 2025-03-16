@@ -5,36 +5,23 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import GUI from "lil-gui";
-import halftoneVertexShader from "./shaders/halftone/vertex.glsl";
+import hologramFragmentShader from "./shaders/holographic/fragment.glsl";
 
-import fragmentShaderSrc from "./shaders/halftone/fragment.glsl";
-import ambientLightSrc from "./shaders/includes/ambientLight.glsl";
-import directionalLightSrc from "./shaders/includes/directionalLight.glsl";
+import vertexShaderSrc from "./shaders/holographic/vertex.glsl";
+import random2DSrc from "./shaders/includes/random2D.glsl";
 
 // GLSL 내 #include를 수동으로 대체
-const halftoneFragmentShader = fragmentShaderSrc
-  .replace("#include ../includes/ambientLight.glsl", ambientLightSrc)
-  .replace("#include ../includes/directionalLight.glsl", directionalLightSrc);
+const hologramVertexShader = vertexShaderSrc.replace(
+  "#include ../includes/random2D.glsl",
+  random2DSrc
+);
 
 const CustomMaterial = () => {
-  const { size } = useThree();
   const [color, setColor] = useState("#ff794d");
-  const [shadowColor, setShadowColor] = useState("#8e19b8");
-  const [lightColor, setLightColor] = useState("#e5ffe0");
-  const [shadowRepetitions, setShadowRepetitions] = useState(100);
-  const [lightRepetitions, setLightRepetitions] = useState(130);
 
   useEffect(() => {
     const gui = new GUI();
     gui.addColor({ color }, "color").onChange(setColor);
-    gui.addColor({ shadowColor }, "shadowColor").onChange(setShadowColor);
-    gui.addColor({ lightColor }, "lightColor").onChange(setLightColor);
-    gui
-      .add({ shadowRepetitions }, "shadowRepetitions", 1, 300, 1)
-      .onChange(setShadowRepetitions);
-    gui
-      .add({ lightRepetitions }, "lightRepetitions", 1, 300, 1)
-      .onChange(setLightRepetitions);
     // gui의 위치를 조정
     gui.domElement.style.position = "absolute";
     gui.domElement.style.top = "87px";
@@ -44,16 +31,16 @@ const CustomMaterial = () => {
   }, []);
 
   return new THREE.ShaderMaterial({
-    vertexShader: halftoneVertexShader,
-    fragmentShader: halftoneFragmentShader,
+    vertexShader: hologramVertexShader,
+    fragmentShader: hologramFragmentShader,
     uniforms: {
+      uTime: { value: 0 },
       uColor: { value: new THREE.Color(color) },
-      uShadowColor: { value: new THREE.Color(shadowColor) },
-      uLightColor: { value: new THREE.Color(lightColor) },
-      uResolution: { value: new THREE.Vector2(size.width, size.height) },
-      uShadowRepetitions: { value: shadowRepetitions },
-      uLightRepetitions: { value: lightRepetitions },
     },
+    transparent: true,
+    side: THREE.DoubleSide,
+    depthWrite: false,
+    blending: THREE.AdditiveBlending,
   });
 };
 
@@ -61,7 +48,7 @@ const SceneObjects = () => {
   const material = CustomMaterial();
   const torusRef = useRef<THREE.Mesh>(null);
   const sphereRef = useRef<THREE.Mesh>(null);
-  const { scene } = useGLTF("/images/static/halftone/suzanne.glb");
+  const { scene } = useGLTF("/images/static/hologram/suzanne.glb");
 
   useEffect(() => {
     scene.traverse((child) => {
@@ -103,20 +90,18 @@ const SceneObjects = () => {
 const SceneSetup = () => {
   const { gl } = useThree();
   useEffect(() => {
-    gl.setClearColor("#26132f");
+    gl.setClearColor("#1d1f2a");
   }, [gl]);
   return null;
 };
 
-const HalftoneScene = () => {
+const HologramScene = () => {
   return (
     <Canvas
       camera={{ position: [7, 7, 7], fov: 25 }}
       dpr={Math.min(window.devicePixelRatio, 2)}
       gl={{ antialias: true }}
     >
-      <ambientLight intensity={0.5} />
-      <directionalLight position={[5, 5, 5]} intensity={1} />
       <OrbitControls enableDamping enableZoom={false} />
       <SceneSetup />
       <SceneObjects />
@@ -124,4 +109,4 @@ const HalftoneScene = () => {
   );
 };
 
-export default HalftoneScene;
+export default HologramScene;
