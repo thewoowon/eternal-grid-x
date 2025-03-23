@@ -1,18 +1,18 @@
 "use client";
 
 import styled from "@emotion/styled";
+import dynamic from "next/dynamic";
+
+const TerrainScene = dynamic(() => import("@/components/module/TerrainScene"), {
+  ssr: false,
+});
 
 const TerrainPage = () => {
   return (
     <Container>
-      <h1
-        style={{
-          color: "white",
-          fontSize: "3rem",
-        }}
-      >
-        Terrain
-      </h1>
+      <section style={{ width: "100vw", height: "100vh" }}>
+        <TerrainScene />
+      </section>
     </Container>
   );
 };
@@ -22,9 +22,4 @@ export default TerrainPage;
 const Container = styled.div`
   width: 100vw;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  background-color: black;
 `;
