@@ -49,7 +49,10 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hot-toast": "^2.5.1",
-    "three": "^0.172.0"
+    "three": "^0.172.0",
+    "three-bvh-csg": "^0.0.16",
+    "three-custom-shader-material": "^6.3.1",
+    "three-stdlib": "^2.35.14"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
